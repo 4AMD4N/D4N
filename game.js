@@ -1373,6 +1373,10 @@ function render() {
       ${state.screen === "tutorial" ? renderTutorial() : ""}
       ${state.screen === "collection" ? renderCollection() : ""}
       ${state.screen === "result" ? renderResult() : ""}
+      <footer class="site-footer">
+        <span>© 2026 4AMD4N. All rights reserved.</span>
+        <span>未经授权，不得复制、修改、再发布或用于商业用途</span>
+      </footer>
     </div>
   `;
 }
