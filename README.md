@@ -2,6 +2,12 @@
 
 《易世界》是一款基于阴阳、八卦与变爻机制的短局回合制卡牌游戏。
 
+## 版权声明
+
+© 2026 4AMD4N. All rights reserved.
+
+未经授权，不得复制、修改、再发布或用于商业用途。
+
 ## GitHub Pages 发布方式
 
 1. 创建一个新的 GitHub repository，例如 `yishijie`
