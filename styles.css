@@ -1227,6 +1227,18 @@ button {
   gap: 8px;
 }
 
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 14px;
+  padding: 18px 8px 4px;
+  color: rgba(44, 42, 37, 0.62);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 @media (max-width: 900px) {
   .start-layout,
   .game-grid,
