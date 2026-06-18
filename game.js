@@ -73,6 +73,142 @@ const TRIGRAMS = {
   },
 };
 
+const TRIGRAM_ORDER = ["111", "110", "101", "100", "011", "010", "001", "000"];
+const HEXAGRAM_NAMES = [
+  "乾",
+  "坤",
+  "屯",
+  "蒙",
+  "需",
+  "讼",
+  "师",
+  "比",
+  "小畜",
+  "履",
+  "泰",
+  "否",
+  "同人",
+  "大有",
+  "谦",
+  "豫",
+  "随",
+  "蛊",
+  "临",
+  "观",
+  "噬嗑",
+  "贲",
+  "剥",
+  "复",
+  "无妄",
+  "大畜",
+  "颐",
+  "大过",
+  "坎",
+  "离",
+  "咸",
+  "恒",
+  "遯",
+  "大壮",
+  "晋",
+  "明夷",
+  "家人",
+  "睽",
+  "蹇",
+  "解",
+  "损",
+  "益",
+  "夬",
+  "姤",
+  "萃",
+  "升",
+  "困",
+  "井",
+  "革",
+  "鼎",
+  "震",
+  "艮",
+  "渐",
+  "归妹",
+  "丰",
+  "旅",
+  "巽",
+  "兑",
+  "涣",
+  "节",
+  "中孚",
+  "小过",
+  "既济",
+  "未济",
+];
+const HEXAGRAM_VALUES = [
+  63, 0, 17, 34, 23, 58, 2, 16, 55, 59, 7, 56, 61, 47, 4, 8, 25, 38, 3, 48, 41, 37, 32, 1, 57, 39, 33, 30, 18, 45, 28, 14,
+  60, 15, 40, 5, 53, 43, 10, 20, 35, 49, 31, 62, 24, 6, 26, 22, 29, 46, 9, 36, 52, 11, 13, 44, 54, 27, 50, 19, 51, 12, 21, 42,
+];
+const HEXAGRAM_GUIDANCE = {
+  屯: { theme: "初生有难", advice: "先立根基，寻找同行者，不宜急于求成", action: "守" },
+  家人: { theme: "正内而后行外", advice: "先明确角色与边界，让内部秩序稳定下来", action: "守" },
+  革: { theme: "顺时而变", advice: "旧法已经失效，条件成熟时应果断更新", action: "变" },
+  大有: { theme: "盛大所有", advice: "资源与时机汇聚，应主动承担并善用所得", action: "进" },
+};
+const HEXAGRAMS = Object.fromEntries(
+  HEXAGRAM_NAMES.map((name, index) => {
+    const topToBottom = HEXAGRAM_VALUES[index].toString(2).padStart(6, "0");
+    const bottomToTop = [...topToBottom].reverse().join("");
+    const innerPattern = bottomToTop.slice(0, 3);
+    const outerPattern = bottomToTop.slice(3);
+    return [
+      bottomToTop,
+      {
+        id: index + 1,
+        name,
+        symbol: String.fromCodePoint(0x4dc0 + index),
+        lines: bottomToTop,
+        inner: TRIGRAMS[innerPattern],
+        outer: TRIGRAMS[outerPattern],
+        guidance: HEXAGRAM_GUIDANCE[name] || null,
+      },
+    ];
+  }),
+);
+const REALM_TWO_SCENARIOS = [
+  {
+    id: "new_venture",
+    title: "新局初启",
+    story: "你与几位朋友准备共同开启一项新计划。想法刚刚萌芽，前方却有许多未知，资源与分工都还不稳定",
+    clue: "下有雷动，象征事情开始萌发；上有水险，提醒前路仍多艰难",
+    inner: "100",
+    outer: "010",
+    action: "守",
+  },
+  {
+    id: "home_order",
+    title: "内部分歧",
+    story: "一个长期合作的团队开始出现争执。每个人都很努力，但职责模糊、沟通越界，让小问题不断累积",
+    clue: "下有火明，使内情得以显现；上有风入，让秩序与影响逐渐深入",
+    inner: "101",
+    outer: "011",
+    action: "守",
+  },
+  {
+    id: "old_rules",
+    title: "旧制难行",
+    story: "沿用多年的办法已经无法解决新问题。继续维持最省力，但每拖延一天，积累的矛盾就更深",
+    clue: "下有火明，照见问题；上有泽悦，众人已有共同改变的意愿",
+    inner: "101",
+    outer: "110",
+    action: "变",
+  },
+  {
+    id: "great_harvest",
+    title: "时机汇聚",
+    story: "经过长期准备，你终于获得资源、伙伴与信任。机会已经来到，但更大的收获也意味着更大的责任",
+    clue: "下有天健，持续创造；上有火明，使成果被看见",
+    inner: "111",
+    outer: "101",
+    action: "进",
+  },
+];
+
 const DESTINIES = [
   {
     id: "qian_bonus",
@@ -242,6 +378,7 @@ const BOSS_STAGE = STAGE_TARGETS.length - 1;
 const MAX_DESTINIES = 5;
 const COLLECTION_KEY = "yishijie.collection.v1";
 const COIN_KEY = "yishijie.coins.v1";
+const REALM_TWO_BEST_KEY = "yishijie.realm-two-best.v1";
 const DESTINY_AFFINITY = {
   qian_bonus: ["乾"],
   li_bonus: ["离"],
@@ -380,6 +517,15 @@ function freshState() {
     openHintKey: null,
     guideActive: false,
     guideStep: 0,
+    realmTwo: {
+      scenarioIndex: 0,
+      phase: "compose",
+      inner: null,
+      outer: null,
+      score: 0,
+      lastResult: null,
+    },
+    realmTwoBest: loadRealmTwoBest(),
     result: null,
     collection: loadCollection(),
     returnScreen: "start",
@@ -408,6 +554,18 @@ function loadCoins() {
 
 function saveCoins(value) {
   localStorage.setItem(COIN_KEY, String(value));
+}
+
+function loadRealmTwoBest() {
+  try {
+    return Number(localStorage.getItem(REALM_TWO_BEST_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function saveRealmTwoBest(value) {
+  localStorage.setItem(REALM_TWO_BEST_KEY, String(value));
 }
 
 function sample(items) {
@@ -444,6 +602,74 @@ function drawYinYangCards(count) {
 function getTrigramFromLines(lines) {
   if (lines.length !== 3) return null;
   return TRIGRAMS[lines.join("")];
+}
+
+function getHexagramFromTrigrams(innerPattern, outerPattern) {
+  if (!innerPattern || !outerPattern) return null;
+  return HEXAGRAMS[`${innerPattern}${outerPattern}`] || null;
+}
+
+function getCurrentRealmTwoScenario() {
+  return REALM_TWO_SCENARIOS[state.realmTwo.scenarioIndex] || null;
+}
+
+function startRealmTwo() {
+  state = {
+    ...freshState(),
+    screen: "realm-two",
+  };
+  render();
+}
+
+function selectRealmTwoTrigram(position, pattern) {
+  if (state.realmTwo.phase !== "compose" || !TRIGRAMS[pattern]) return;
+  state.realmTwo[position] = pattern;
+  render();
+}
+
+function confirmRealmTwoHexagram() {
+  if (state.realmTwo.phase !== "compose") return;
+  const hexagram = getHexagramFromTrigrams(state.realmTwo.inner, state.realmTwo.outer);
+  if (!hexagram) return;
+  discoverHexagram(hexagram);
+  state.realmTwo.phase = "judge";
+  render();
+}
+
+function judgeRealmTwo(action) {
+  if (state.realmTwo.phase !== "judge") return;
+  const scenario = getCurrentRealmTwoScenario();
+  const selected = getHexagramFromTrigrams(state.realmTwo.inner, state.realmTwo.outer);
+  const expected = getHexagramFromTrigrams(scenario.inner, scenario.outer);
+  const hexagramPoints = selected?.name === expected?.name ? 60 : 0;
+  const actionPoints = action === scenario.action ? 40 : 0;
+  state.realmTwo.score += hexagramPoints + actionPoints;
+  state.realmTwo.lastResult = {
+    action,
+    selected,
+    expected,
+    hexagramPoints,
+    actionPoints,
+  };
+  state.realmTwo.phase = "feedback";
+  render();
+}
+
+function advanceRealmTwo() {
+  if (state.realmTwo.phase !== "feedback") return;
+  if (state.realmTwo.scenarioIndex >= REALM_TWO_SCENARIOS.length - 1) {
+    state.realmTwo.phase = "complete";
+    state.realmTwoBest = Math.max(state.realmTwoBest, state.realmTwo.score);
+    saveRealmTwoBest(state.realmTwoBest);
+    render();
+    return;
+  }
+  state.realmTwo.scenarioIndex += 1;
+  state.realmTwo.phase = "compose";
+  state.realmTwo.inner = null;
+  state.realmTwo.outer = null;
+  state.realmTwo.lastResult = null;
+  render();
 }
 
 function getStageInfo(index = state.stage) {
@@ -724,6 +950,15 @@ function discoverDestinies(destinies) {
   destinies.forEach(discoverDestiny);
 }
 
+function discoverHexagram(hexagram) {
+  state.collection.hexagrams = state.collection.hexagrams || {};
+  state.collection.hexagrams[hexagram.name] = {
+    id: hexagram.id,
+    firstSeenAt: state.collection.hexagrams[hexagram.name]?.firstSeenAt || Date.now(),
+  };
+  saveCollection(state.collection);
+}
+
 function getDestinyWeight(destiny) {
   const affinity = DESTINY_AFFINITY[destiny.id] || [];
   if (!affinity.length || !state.playedTrigrams.length) return 1;
@@ -910,6 +1145,7 @@ function renderTopbar() {
       <div class="top-actions">
         <span class="coin-chip">铜钱 ${state.treasury}</span>
         <button class="btn icon-btn" data-action="tutorial" aria-label="新手教程" title="新手教程">?</button>
+        <button class="btn" data-action="realm-two">第二境</button>
         <button class="btn" data-action="collection">图鉴</button>
         <button class="btn primary" data-action="new-game">新局</button>
       </div>
@@ -930,6 +1166,7 @@ function renderStart() {
             </div>
             <div class="action-row">
               <button class="btn gold" data-action="new-game">开始一局</button>
+              <button class="btn primary" data-action="realm-two">进入第二境</button>
               <button class="btn subtle" data-action="tutorial">新手教程</button>
               <button class="btn" data-action="collection">查看图鉴</button>
             </div>
@@ -967,7 +1204,7 @@ function renderStart() {
               <p>从八卦开始，逐渐发现隐藏组合、特殊变化与神秘路线。有些秘密，需要多次轮回才能揭开。</p>
             </article>
             <article class="feature-card feature-card-wide">
-              <span>下一境</span>
+              <span>第二境 · 已开放</span>
               <h4>六十四卦</h4>
               <p>熟悉八卦之后，游戏会进入上下卦组合的阶段。两个八卦相叠，形成六十四卦，并引出更具体的事态、转机与故事判断。</p>
             </article>
@@ -1239,18 +1476,192 @@ function renderReward() {
   `;
 }
 
+function getHexagramFullName(hexagram) {
+  if (!hexagram) return "待成卦";
+  return `${hexagram.outer.meaning}${hexagram.inner.meaning}${hexagram.name}`;
+}
+
+function renderHexagramLines(hexagram) {
+  if (!hexagram) {
+    return Array.from({ length: 6 }, () => `<span class="hexagram-line empty"></span>`).join("");
+  }
+  return [...hexagram.lines]
+    .reverse()
+    .map((line, index) => `<span class="hexagram-line ${index === 3 ? "inner-boundary" : ""}">${lineMarkup(Number(line))}</span>`)
+    .join("");
+}
+
+function renderTrigramPicker(position, selectedPattern, disabled = false) {
+  const label = position === "inner" ? "内卦 · 在下" : "外卦 · 在上";
+  return `
+    <section class="trigram-picker ${disabled ? "disabled" : ""}">
+      <div class="picker-title">
+        <strong>${label}</strong>
+        <span>${position === "inner" ? "事情的根基" : "外部的形势"}</span>
+      </div>
+      <div class="trigram-choice-grid">
+        ${TRIGRAM_ORDER.map((pattern) => {
+          const trigram = TRIGRAMS[pattern];
+          return `
+            <button
+              class="trigram-choice ${selectedPattern === pattern ? "selected" : ""}"
+              data-action="select-realm-two-trigram"
+              data-position="${position}"
+              data-pattern="${pattern}"
+              ${disabled ? "disabled" : ""}
+              aria-pressed="${selectedPattern === pattern}"
+            >
+              <span class="choice-symbol">${trigram.symbol}</span>
+              <span class="choice-name">${trigram.name}</span>
+              <span class="choice-meaning">${trigram.meaning}</span>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderRealmTwoFeedback(scenario, result) {
+  const hexagramCorrect = result.hexagramPoints > 0;
+  const actionCorrect = result.actionPoints > 0;
+  const guidance = result.expected.guidance;
+  return `
+    <section class="realm-feedback" aria-live="polite">
+      <div class="feedback-verdict ${hexagramCorrect && actionCorrect ? "success" : "partial"}">
+        <span>${result.hexagramPoints + result.actionPoints} / 100</span>
+        <strong>${hexagramCorrect && actionCorrect ? "得其象，也得其时" : "卦象已经显现，再看其中的时势"}</strong>
+      </div>
+      <div class="feedback-grid">
+        <div>
+          <span class="feedback-label">你得到</span>
+          <strong>${getHexagramFullName(result.selected)}</strong>
+          <p>${hexagramCorrect ? "上下卦判断正确" : `此题应为${getHexagramFullName(result.expected)}`}</p>
+        </div>
+        <div>
+          <span class="feedback-label">你的选择</span>
+          <strong>宜${result.action}</strong>
+          <p>${actionCorrect ? "行动顺应此卦之时" : `此时更适合宜${scenario.action}`}</p>
+        </div>
+      </div>
+      <div class="meaning-note">
+        <span>${guidance.theme}</span>
+        <p>${guidance.advice}</p>
+      </div>
+      <button class="btn primary" data-action="realm-two-next">${state.realmTwo.scenarioIndex === REALM_TWO_SCENARIOS.length - 1 ? "查看本境结果" : "进入下一象"}</button>
+    </section>
+  `;
+}
+
+function renderRealmTwo() {
+  const realm = state.realmTwo;
+  const scenario = getCurrentRealmTwoScenario();
+  if (realm.phase === "complete") {
+    return `
+      <main class="screen active">
+        <section class="realm-complete">
+          <span class="realm-seal">䷿</span>
+          <p class="intro-kicker">第二境 · 重卦</p>
+          <h2 class="screen-title">上下相叠，万象初成</h2>
+          <p class="screen-copy">你已走过四种情境，也开始看见卦象不是答案，而是判断变化的方法</p>
+          <div class="result-stats">
+            <div class="stat"><span class="label">本次得分</span><strong class="value">${realm.score}</strong></div>
+            <div class="stat"><span class="label">最高记录</span><strong class="value">${state.realmTwoBest}</strong></div>
+            <div class="stat"><span class="label">已识情境</span><strong class="value">4 / 4</strong></div>
+          </div>
+          <div class="action-row">
+            <button class="btn primary" data-action="realm-two">再演一遍</button>
+            <button class="btn" data-action="collection">查看六十四卦</button>
+            <button class="btn subtle" data-action="back-home">返回</button>
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  const selected = getHexagramFromTrigrams(realm.inner, realm.outer);
+  const stepNumber = realm.scenarioIndex + 1;
+  return `
+    <main class="screen active">
+      <section class="realm-two-shell">
+        <header class="realm-two-head">
+          <div>
+            <p class="intro-kicker">第二境 · 重卦</p>
+            <h2 class="screen-title">由八卦，见六十四象</h2>
+            <p class="screen-copy">先取内卦为根，再取外卦为势。上下相叠之后，判断此时宜进、宜守，还是宜变</p>
+          </div>
+          <div class="realm-two-status">
+            <span>第 ${stepNumber} / ${REALM_TWO_SCENARIOS.length} 象</span>
+            <strong>${realm.score}</strong>
+            <small>本境得分</small>
+          </div>
+        </header>
+
+        <div class="realm-two-grid">
+          <aside class="scenario-panel">
+            <span class="scenario-index">情境 ${stepNumber}</span>
+            <h3>${scenario.title}</h3>
+            <p>${scenario.story}</p>
+            <div class="oracle-clue">
+              <span class="hint-bulb" aria-hidden="true"></span>
+              <div><strong>观象</strong><p>${scenario.clue}</p></div>
+            </div>
+          </aside>
+
+          <section class="compose-board">
+            ${renderTrigramPicker("inner", realm.inner, realm.phase !== "compose")}
+            ${renderTrigramPicker("outer", realm.outer, realm.phase !== "compose" || !realm.inner)}
+
+            <section class="hexagram-forge ${selected ? "formed" : ""}">
+              <div class="forge-label top">外卦 ${realm.outer ? `${TRIGRAMS[realm.outer].name} · ${TRIGRAMS[realm.outer].meaning}` : "未定"}</div>
+              <div class="hexagram-lines" aria-label="六爻卦象">${renderHexagramLines(selected)}</div>
+              <div class="forge-label bottom">内卦 ${realm.inner ? `${TRIGRAMS[realm.inner].name} · ${TRIGRAMS[realm.inner].meaning}` : "未定"}</div>
+              <div class="formed-name">
+                <span>${selected ? selected.symbol : "卦"}</span>
+                <strong>${getHexagramFullName(selected)}</strong>
+                <small>${selected ? `第 ${selected.id} 卦` : "选择内外两卦后成象"}</small>
+              </div>
+            </section>
+
+            ${
+              realm.phase === "compose"
+                ? `<button class="btn primary realm-confirm" data-action="realm-two-confirm" ${!selected ? "disabled" : ""}>合卦观象</button>`
+                : ""
+            }
+            ${
+              realm.phase === "judge"
+                ? `<section class="judgment-panel">
+                    <div><span class="reward-kind">最后一问</span><h3>面对这个情境，此时应当如何？</h3></div>
+                    <div class="judgment-actions">
+                      <button data-action="realm-two-judge" data-choice="进"><span>进</span><strong>宜进</strong><small>把握时机，主动承担</small></button>
+                      <button data-action="realm-two-judge" data-choice="守"><span>守</span><strong>宜守</strong><small>稳定根基，暂缓行动</small></button>
+                      <button data-action="realm-two-judge" data-choice="变"><span>变</span><strong>宜变</strong><small>旧法不通，顺时更新</small></button>
+                    </div>
+                  </section>`
+                : ""
+            }
+            ${realm.phase === "feedback" ? renderRealmTwoFeedback(scenario, realm.lastResult) : ""}
+          </section>
+        </div>
+      </section>
+    </main>
+  `;
+}
+
 function renderCollection() {
   const entries = Object.values(TRIGRAMS);
   const discoveredCount = entries.filter((trigram) => state.collection[trigram.name]).length;
   const discoveredDestinies = state.collection.destinies || {};
   const destinyCount = DESTINIES.filter((destiny) => discoveredDestinies[destiny.id]).length;
+  const discoveredHexagrams = state.collection.hexagrams || {};
+  const hexagramCount = HEXAGRAM_NAMES.filter((name) => discoveredHexagrams[name]).length;
   return `
     <main class="screen active">
       <section class="collection-panel">
         <div class="collection-head">
           <div>
             <h2 class="screen-title">图鉴</h2>
-            <p class="screen-copy">八卦已发现：${discoveredCount} / 8　命格已探索：${destinyCount} / ${DESTINIES.length}</p>
+            <p class="screen-copy">八卦 ${discoveredCount} / 8　六十四卦 ${hexagramCount} / 64　命格 ${destinyCount} / ${DESTINIES.length}</p>
           </div>
           <div class="action-row">
             <button class="btn" data-action="back-home">返回</button>
@@ -1282,6 +1693,30 @@ function renderCollection() {
                 `;
               })
               .join("")}
+          </div>
+        </section>
+        <section>
+          <h3 class="section-title">六十四卦图鉴 <span class="pill">${hexagramCount} / 64</span></h3>
+          <p class="section-note">横向为内卦，纵向为外卦。第二境中合成一次，即可点亮对应卦象</p>
+          <div class="hexagram-matrix-wrap">
+            <div class="hexagram-matrix">
+              <div class="matrix-corner">外 \ 内</div>
+              ${TRIGRAM_ORDER.map((pattern) => `<div class="matrix-head">${TRIGRAMS[pattern].symbol}<span>${TRIGRAMS[pattern].name}</span></div>`).join("")}
+              ${TRIGRAM_ORDER.map((outerPattern) => {
+                const outer = TRIGRAMS[outerPattern];
+                return `
+                  <div class="matrix-head row-head">${outer.symbol}<span>${outer.name}</span></div>
+                  ${TRIGRAM_ORDER.map((innerPattern) => {
+                    const hexagram = getHexagramFromTrigrams(innerPattern, outerPattern);
+                    const found = discoveredHexagrams[hexagram.name];
+                    return `<div class="hexagram-cell ${found ? "discovered" : "locked"}" title="${found ? getHexagramFullName(hexagram) : "尚未发现"}">
+                      <span>${found ? hexagram.symbol : "·"}</span>
+                      <strong>${found ? hexagram.name : "未识"}</strong>
+                    </div>`;
+                  }).join("")}
+                `;
+              }).join("")}
+            </div>
           </div>
         </section>
         <section>
@@ -1371,6 +1806,7 @@ function render() {
       ${state.screen === "game" ? renderGame() : ""}
       ${state.screen === "reward" ? renderReward() : ""}
       ${state.screen === "tutorial" ? renderTutorial() : ""}
+      ${state.screen === "realm-two" ? renderRealmTwo() : ""}
       ${state.screen === "collection" ? renderCollection() : ""}
       ${state.screen === "result" ? renderResult() : ""}
       <footer class="site-footer">
@@ -1388,6 +1824,7 @@ app.addEventListener("click", (event) => {
   if (action === "new-game" || action === "redraw") startGame();
   if (action === "tutorial") showTutorial();
   if (action === "tutorial-guide") startGuideRun();
+  if (action === "realm-two") startRealmTwo();
   if (action === "collection") showScreen("collection");
   if (action === "back-home" || action === "back-temp") leaveTemporaryScreen();
   if (action === "select-card") selectCard(target.dataset.id);
@@ -1404,6 +1841,10 @@ app.addEventListener("click", (event) => {
   if (action === "guide-next") nextGuideStep();
   if (action === "guide-close") closeGuide();
   if (action === "reset-collection") resetCollection();
+  if (action === "select-realm-two-trigram") selectRealmTwoTrigram(target.dataset.position, target.dataset.pattern);
+  if (action === "realm-two-confirm") confirmRealmTwoHexagram();
+  if (action === "realm-two-judge") judgeRealmTwo(target.dataset.choice);
+  if (action === "realm-two-next") advanceRealmTwo();
 });
 
 render();

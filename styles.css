@@ -1227,6 +1227,452 @@ button {
   gap: 8px;
 }
 
+.realm-two-shell {
+  display: grid;
+  gap: 20px;
+}
+
+.realm-two-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 24px;
+  padding: 22px;
+  background: rgba(255, 250, 240, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.realm-two-status {
+  display: grid;
+  min-width: 130px;
+  text-align: right;
+}
+
+.realm-two-status span,
+.realm-two-status small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.realm-two-status strong {
+  color: var(--jade);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.realm-two-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1.8fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.scenario-panel {
+  position: sticky;
+  top: 16px;
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+  color: var(--paper);
+  background: #193833;
+  border: 1px solid rgba(229, 192, 100, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 16px 35px rgba(23, 22, 20, 0.12);
+}
+
+.scenario-index,
+.feedback-label {
+  color: var(--gold-2);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.scenario-panel h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-size: 30px;
+}
+
+.scenario-panel > p {
+  margin: 0;
+  color: rgba(246, 240, 227, 0.82);
+  line-height: 1.8;
+}
+
+.oracle-clue {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding-top: 16px;
+  border-top: 1px solid rgba(246, 240, 227, 0.16);
+}
+
+.oracle-clue p {
+  margin: 4px 0 0;
+  color: rgba(246, 240, 227, 0.68);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.compose-board {
+  display: grid;
+  gap: 16px;
+}
+
+.trigram-picker,
+.hexagram-forge,
+.judgment-panel,
+.realm-feedback {
+  padding: 18px;
+  background: rgba(255, 250, 240, 0.76);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.trigram-picker.disabled {
+  opacity: 0.62;
+}
+
+.picker-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.picker-title span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.trigram-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(58px, 1fr));
+  gap: 8px;
+}
+
+.trigram-choice {
+  display: grid;
+  min-width: 0;
+  min-height: 92px;
+  place-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(44, 42, 37, 0.16);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.trigram-choice:hover:not(:disabled),
+.trigram-choice:focus-visible {
+  border-color: var(--jade);
+  transform: translateY(-2px);
+}
+
+.trigram-choice.selected {
+  color: #fffaf0;
+  background: var(--jade);
+  border-color: var(--jade);
+}
+
+.choice-symbol {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.choice-name {
+  font-weight: 900;
+}
+
+.choice-meaning {
+  font-size: 11px;
+  opacity: 0.68;
+}
+
+.hexagram-forge {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(130px, 0.8fr) minmax(170px, 1fr);
+  grid-template-areas:
+    "top lines name"
+    "bottom lines name";
+  align-items: center;
+  gap: 12px 22px;
+  min-height: 250px;
+  color: #f6f0e3;
+  background: #172e2a;
+  border-color: rgba(229, 192, 100, 0.34);
+}
+
+.forge-label {
+  padding: 12px;
+  color: rgba(246, 240, 227, 0.72);
+  border-bottom: 1px solid rgba(246, 240, 227, 0.15);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.forge-label.top { grid-area: top; }
+.forge-label.bottom { grid-area: bottom; }
+
+.hexagram-lines {
+  grid-area: lines;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+  min-height: 200px;
+  padding: 18px;
+  border: 1px solid rgba(229, 192, 100, 0.28);
+  border-radius: 6px;
+}
+
+.hexagram-line {
+  display: grid;
+  min-height: 15px;
+  place-items: center;
+}
+
+.hexagram-line.inner-boundary {
+  margin-top: 8px;
+}
+
+.hexagram-line.empty {
+  height: 10px;
+  background: rgba(246, 240, 227, 0.12);
+  border-radius: 1px;
+}
+
+.hexagram-lines .line-glyph,
+.hexagram-lines .yang-line,
+.hexagram-lines .yin-line {
+  width: 100%;
+}
+
+.formed-name {
+  grid-area: name;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.formed-name > span {
+  color: var(--gold-2);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 72px;
+  line-height: 1;
+}
+
+.formed-name strong {
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-size: 24px;
+}
+
+.formed-name small {
+  color: rgba(246, 240, 227, 0.6);
+}
+
+.realm-confirm {
+  justify-self: end;
+  min-width: 160px;
+}
+
+.judgment-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.judgment-panel h3 {
+  margin: 6px 0 0;
+}
+
+.judgment-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.judgment-actions button {
+  display: grid;
+  min-height: 122px;
+  place-items: center;
+  gap: 4px;
+  padding: 14px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.judgment-actions button:hover,
+.judgment-actions button:focus-visible {
+  color: #fffaf0;
+  background: var(--jade);
+  border-color: var(--jade);
+}
+
+.judgment-actions button > span {
+  color: var(--gold);
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-size: 34px;
+}
+
+.judgment-actions small {
+  opacity: 0.68;
+}
+
+.realm-feedback {
+  display: grid;
+  gap: 14px;
+}
+
+.feedback-verdict {
+  display: grid;
+  gap: 3px;
+  padding-left: 12px;
+  border-left: 4px solid var(--gold);
+}
+
+.feedback-verdict.success {
+  border-color: var(--jade);
+}
+
+.feedback-verdict span {
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.feedback-verdict strong {
+  font-size: 20px;
+}
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.feedback-grid > div,
+.meaning-note {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(44, 42, 37, 0.12);
+  border-radius: 6px;
+}
+
+.feedback-grid strong {
+  display: block;
+  margin: 4px 0;
+}
+
+.feedback-grid p,
+.meaning-note p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.meaning-note span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--jade);
+  font-weight: 900;
+}
+
+.realm-complete {
+  display: grid;
+  max-width: 720px;
+  gap: 18px;
+  margin: 20px auto;
+  padding: 42px;
+  place-items: center;
+  text-align: center;
+  background: rgba(255, 250, 240, 0.78);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.realm-seal {
+  color: var(--gold);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 86px;
+  line-height: 1;
+}
+
+.section-note {
+  margin: -4px 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hexagram-matrix-wrap {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.hexagram-matrix {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(72px, 1fr));
+  gap: 5px;
+  min-width: 720px;
+}
+
+.matrix-corner,
+.matrix-head,
+.hexagram-cell {
+  display: grid;
+  min-height: 64px;
+  place-items: center;
+  padding: 6px;
+  text-align: center;
+  border: 1px solid rgba(44, 42, 37, 0.13);
+  border-radius: 4px;
+}
+
+.matrix-corner,
+.matrix-head {
+  color: #fffaf0;
+  background: var(--jade);
+  font-weight: 900;
+}
+
+.matrix-head span {
+  font-size: 11px;
+}
+
+.hexagram-cell {
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.hexagram-cell.discovered {
+  color: var(--ink);
+  background: rgba(229, 192, 100, 0.2);
+  border-color: rgba(182, 138, 53, 0.42);
+}
+
+.hexagram-cell.locked {
+  color: rgba(44, 42, 37, 0.35);
+}
+
+.hexagram-cell > span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  line-height: 1;
+}
+
+.hexagram-cell strong {
+  font-size: 11px;
+}
+
 .site-footer {
   display: flex;
   flex-wrap: wrap;
@@ -1242,8 +1688,17 @@ button {
 @media (max-width: 900px) {
   .start-layout,
   .game-grid,
-  .trigram-zone {
+  .trigram-zone,
+  .realm-two-grid {
     grid-template-columns: 1fr;
+  }
+
+  .scenario-panel {
+    position: static;
+  }
+
+  .trigram-choice-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .side-panel {
@@ -1272,9 +1727,21 @@ button {
   .collection-head,
   .result-head,
   .tutorial-head,
-  .guided-preview {
+  .guided-preview,
+  .realm-two-head {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+
+  .realm-two-status {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+  }
+
+  .realm-two-status small {
+    grid-column: 1 / -1;
   }
 
   .topbar {
@@ -1295,6 +1762,44 @@ button {
   .tutorial-grid,
     .result-stats {
     grid-template-columns: 1fr;
+  }
+
+  .hexagram-forge {
+    grid-template-columns: 1fr minmax(110px, 0.8fr);
+    grid-template-areas:
+      "top lines"
+      "bottom lines"
+      "name name";
+  }
+
+  .formed-name {
+    grid-template-columns: auto auto;
+    justify-content: center;
+  }
+
+  .formed-name > span {
+    grid-row: 1 / 3;
+    font-size: 58px;
+  }
+
+  .feedback-grid,
+  .judgment-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .judgment-actions button {
+    grid-template-columns: 42px 1fr;
+    min-height: 72px;
+    justify-items: start;
+    text-align: left;
+  }
+
+  .judgment-actions button > span {
+    grid-row: 1 / 3;
+  }
+
+  .realm-complete {
+    padding: 28px 18px;
   }
 
   .card-button,
